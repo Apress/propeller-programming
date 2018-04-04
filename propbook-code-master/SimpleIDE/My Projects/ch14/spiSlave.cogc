@@ -1,0 +1,39 @@
+/* spiSlave.cogc: simulated SPI slave
+ * cogc file that will run in its own cog
+ * - wait for SPI CHIP SELECT line to go low,
+ *   then clock out 32 bits of data
+ */
+#include "c-hw.h"
+#include <propeller.h>
+
+static _COGMEM int val;
+static _COGMEM int j;
+static _COGMEM int bit;
+void main(struct locker_t *p) {
+  int mask;
+
+  mask = MISOMask;
+
+  int i=0;
+  DIRA = 0;
+  OUTA = 0;
+  DIRA |= MISOMask;
+
+  i=0;
+  while(1) {
+    val = i;
+    waitpeq(CSMask, CSMask);
+    waitpne(CSMask, CSMask);
+    for(j=31; j>=0; j--) {
+
+      bit = (val >> j) & 0x01; // get jth bit
+      OUTA ^= (-bit ^ OUTA) & MISOMask; // set miso pin of outa to bit
+
+      waitpeq(CLKMask, CLKMask); // wait for rising clock...
+      waitpne(CLKMask, CLKMask); // and then falling clock
+    }  
+    OUTA &= !MISOMask; // lower miso line
+    i++;  
+  }
+} 
+

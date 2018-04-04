@@ -1,0 +1,64 @@
+#include "compr_cogc.h"
+#include <propeller.h>
+
+// shared vars
+extern volatile int nsamps;
+extern volatile int ncompr;
+extern volatile int sampsBuf[NSAMPS_MAX];
+extern volatile char packBuf[NSAMPS_MAX<<2]; // 128 * 4
+extern volatile int comprCodesBuf[NSAMPS_MAX>>4]; //128 / 16
+
+/* cog code - compr
+   use nsamps and ncompr to signal with main cog
+     start compression when nsamps != 0
+     signal completion with ncmopr > 0
+     signal error with ncompr = 0
+   compress sampsBuf to packBuf
+   populate comprCodesBuf
+   - args: pointer to memory space PAR - UNUSED
+   - return: none
+ */
+
+void main(struct locker_t *p) {
+  int i, nc, nbytes, codenum, codeshift, code;
+  int diff, adiff;
+
+  while(1) {
+    if (nsamps == 0) {
+      continue; // loop continuously while nsamps is 0
+    } else {
+
+      // perform the compression here
+      if (nsamps > NSAMPS_MAX || nsamps < -NSAMPS_MAX) {
+        ncompr = 0; // signal error
+        nsamps = 0;
+        continue;
+      }
+      for(i=0; i<nsamps; i++) {
+        if(i==0) { // first samp
+          memcpy(packBuf, (char *)sampsBuf, 3);
+          nc = 3;
+        } else {
+          diff = sampsBuf[i] - sampsBuf[i-1];
+          adiff = abs(diff);
+          if (adiff < TWO_BYTES) {
+            nbytes = 1;
+            code = CODE08;
+          } else if (adiff < THREE_BYTES) {
+            nbytes = 2;
+            code = CODE16;
+          } else {
+            nbytes = 3;
+            code = CODE24;
+          }
+          // copy the correct number of bytes from diff
+          // to packBuf
+          memcpy(packBuf+nc, (char *)diff, nbytes);
+          nc += nbytes;
+        }
+      }
+      ncompr = nc; // signal completion
+      nsamps = 0;  // prevent another cycle from starting
+    }
+  }
+}                  

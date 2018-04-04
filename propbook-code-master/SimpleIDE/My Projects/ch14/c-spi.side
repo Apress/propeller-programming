@@ -1,0 +1,12 @@
+c-spi.c
+c-hw.h
+spiMaster.cogc
+spiSlave.cogc
+>compiler=C
+>memtype=lmm main ram
+>optimize=-Os
+>-m32bit-doubles
+>-fno-exceptions
+>-Dprintf=__simple_printf
+>defs::-std=c99
+>BOARD::PSU

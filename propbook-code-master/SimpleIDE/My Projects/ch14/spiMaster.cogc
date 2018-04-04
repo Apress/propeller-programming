@@ -1,0 +1,52 @@
+/* spiMaster.cogc: SPI master code 
+ * because this is a cogc file, this code will be launched in its
+ * own cog.
+ * Shared variables with main cog: masterSem and data[]
+ */
+
+#include "c-hw.h"
+#include <propeller.h>
+
+extern unsigned char masterSem;
+extern int data[NSAMPS_MAX];
+
+static _COGMEM int i, j, val, bit;
+static _COGMEM clkwidth;
+static _COGMEM mask;
+
+void main(struct locker_t *p) {
+  //int i, j, val, bit;
+  mask = MISOMask;
+  clkwidth=50; // counts to wait between clock transitions.
+  
+  OUTA = 0;
+  OUTA |= CSMask; // preset CS high
+  DIRA = 0;
+  DIRA |= CSMask | CLKMask | MOSIMask; // set to outputs
+
+  while(1) {
+    while(lockset(masterSem)) { // wait to obtain lock
+      ;
+    }
+    // read from spi and write to data[]
+    for(i=0; i<NSAMPS_MAX; i++) {
+      OUTA ^= CSMask; // lower cs
+      val = 0;
+      for(j=31; j>=0; j--) {
+        waitcnt(CNT + clkwidth); // wait 
+        OUTA ^= CLKMask; // raise clock
+
+        bit = (INA & MISOMask) >> MISO; // get value of miso pin and put in low bit
+        val |= bit << j;
+
+        waitcnt(CNT + clkwidth);
+        OUTA ^= CLKMask; // lower clock
+      }
+      data[i] = val;
+      OUTA ^= CSMask;
+      waitcnt(CNT+3*clkwidth);
+    }
+
+    lockclr(masterSem);          
+  }
+} 

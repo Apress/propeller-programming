@@ -1,0 +1,10 @@
+compr_c_pasm.c
+>-fno-exceptions
+>-lm
+>-m32bit-doubles
+>BOARD::PSU
+>compiler=C
+>defs::-std=c99
+>memtype=lmm main ram
+>optimize=-Os
+compr.spin -> ../ch13_c_pasm_1/compr.spin

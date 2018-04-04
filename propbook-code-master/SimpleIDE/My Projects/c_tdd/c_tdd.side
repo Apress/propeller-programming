@@ -1,0 +1,10 @@
+c_tdd.c
+>compiler=C
+>memtype=lmm main ram
+>optimize=-Os
+>-m32bit-doubles
+>-fno-exceptions
+>-Dprintf=__simple_printf
+>defs::-std=c99
+>-create_library
+>BOARD::PSU
