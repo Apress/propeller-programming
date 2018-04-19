@@ -1,6 +1,8 @@
 # Code for propeller pasm tutorial book.
 
-Purchase the book at [Leanpub Propeller Book](https://leanpub.com/propellerassemblerpasmintroduction).
+Purchase the book at 
+[Apress](https://www.apress.com/9781484233535) or [Amazon](https://www.amazon.com/Propeller-Programming-Using-Assembler-Spin/dp/1484233530)
+ 
 
 ## Compiling and Running Spin
 
