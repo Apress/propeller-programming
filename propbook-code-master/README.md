@@ -101,7 +101,7 @@ CON ' Clock mode settings
 
   FULL_SPEED  = ((_clkmode - xtal1) >> 6) * _xinfreq  ' system freq as a constant
   ONE_MS      = FULL_SPEED / 1_000                    ' ticks in 1ms
-  ONE_US      = FULL_SPEED / 1_000_00                 ' ticks in 1us
+  ONE_US      = FULL_SPEED / 1_000_000                 ' ticks in 1us
 
 CON ' Pin map
 
