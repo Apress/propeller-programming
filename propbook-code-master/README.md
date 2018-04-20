@@ -35,9 +35,9 @@ In order to use it as an SCM, you will need to install the `git` program or a GU
 
 Clone the repository (as this set of files is called):
 ```
-git clone https://github.com/sanandak/propbook-code.git
+git clone https://github.com/Apress/propeller-programming.git
 ```
-This will create a directory `propbook-code` that is identical to this one.
+This will create a directory `propeller-programming/propbook-code-master` that is identical to this one.
 
 At any later time, as I make changes to the repository, you can update
 your copy:
@@ -132,7 +132,7 @@ has needed libraries (serial port, number formatting, and unit-testing).
 The board configuration refers to a file in `$PROPDIR/propeller-load`, in this case `psu.cfg`:
 
 ```
-> cd propbook-code/ch03
+> cd propbook-code-master/ch03
 
 # compile the spin code to binary
 > openspin -L ../libs hello_Demo.spin 
